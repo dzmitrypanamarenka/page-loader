@@ -1,0 +1,44 @@
+{
+  "name": "ploader",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "watch": "jest --watch",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "babel-node": "babel-node",
+    "prepublish": "npm run build",
+    "eslint": "eslint src/**/*.js"
+  },
+  "bin": {
+    "ploader": "dist/bin/ploader.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dzmitrypanamarenka/project-lvl2-s129.git"
+  },
+  "author": "me",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dzmitrypanamarenka/project-lvl2-s129/issues"
+  },
+  "homepage": "https://github.com/dzmitrypanamarenka/project-lvl2-s129#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.0.1",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "jest": "^21.2.1"
+  },
+  "dependencies": {
+    "commander": "^2.11.0",
+    "ini": "^1.3.4",
+    "js-yaml": "^3.10.0",
+    "lodash": "^4.17.4"
+  }
+}
