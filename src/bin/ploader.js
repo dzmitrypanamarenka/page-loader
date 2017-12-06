@@ -12,8 +12,7 @@ program
 program
   .action((address) => {
     const { output } = program;
-    const result = loader(address, output);
-    console.log(result);
+    loader(address, output);
   });
 
 program.parse(process.argv);
