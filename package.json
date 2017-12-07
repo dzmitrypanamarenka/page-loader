@@ -43,5 +43,16 @@
     "lodash": "^4.17.4",
     "mz": "^2.7.0",
     "nock": "^9.1.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageReporters": [
+      "lcov"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/__tests__/__fixtures__/"
+    ]
   }
 }
