@@ -4,9 +4,9 @@ import path from 'path';
 import nock from 'nock';
 import axios from 'axios';
 import cheerio from 'cheerio';
-import url from 'url';
 import httpAdapter from 'axios/lib/adapters/http';
 import loadPage from '../src';
+import { getLocalPath } from '../src/localPath';
 
 describe('ploader', () => {
   let dir;
@@ -15,12 +15,6 @@ describe('ploader', () => {
   const address = `${host}/courses`;
   const html = fs.readFileSync('__tests__/fixtures/index.html', 'utf-8');
   axios.defaults.adapter = httpAdapter;
-
-  const getLocalPath = (addr, index) => {
-    const { hostname, pathname } = url.parse(addr);
-    const ext = index ? '.html' : '_files';
-    return `${hostname.split('.').join('-')}${pathname.split('/').join('-')}${ext}`;
-  };
 
   beforeEach(() => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), sep, 'ploader-'));
@@ -58,9 +52,9 @@ describe('ploader', () => {
         const link = path.parse($('link[href]').first().attr('href')).dir;
         const image = path.parse($('img[src]').first().attr('src')).dir;
 
-        expect(script).toBe(localPath);
-        expect(link).toBe(localPath);
-        expect(image).toBe(localPath);
+        expect(`${script}/`).toBe(localPath);
+        expect(`${link}/`).toBe(localPath);
+        expect(`${image}/`).toBe(localPath);
       });
   });
 

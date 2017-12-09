@@ -2,40 +2,21 @@ import fs from 'mz/fs';
 import url from 'url';
 import axios from 'axios';
 import cheerio from 'cheerio';
-// import http from 'http';
-// import _ from 'lodash';
-// import path from 'path';
-
-const getLocalPath = (address, index) => {
-  const { hostname, pathname } = url.parse(address);
-  const ext = index ? '.html' : '_files/';
-  return `${hostname.split('.').join('-')}${pathname.split('/').join('-')}${ext}`;
-};
-const getLinkPath = (link) => {
-  const { pathname } = url.parse(link);
-  return `${pathname.split('/').filter(el => el).join('-')}`;
-};
+import { getLocalPath, getLinkPath } from './localPath';
 
 const loadPage = (address, folder) => {
   const indexHtml = `${folder}/${getLocalPath(address, true)}`;
   const localPath = `${folder}/${getLocalPath(address)}`;
   return axios(address)
     .then((res) => {
-
       const $ = cheerio.load(res.data, { decodeEntities: false });
       const resources = [];
       $('script[src]').add('link[href]').add('img[src]').each((i, el) => {
-        if ($(el).prop('name') === 'link') {
-          resources.push($(el).attr('href'));
-          const localUrl = getLinkPath($(el).attr('href'));
-          const newHref = url.format({ host: localPath, pathname: localUrl });
-          $(el).attr('href', newHref);
-        } else {
-          resources.push($(el).attr('src'));
-          const localUrl = getLinkPath($(el).attr('src'));
-          const newSrc = url.format({ host: localPath, pathname: localUrl });
-          $(el).attr('src', newSrc);
-        }
+        const attribute = $(el).prop('name') === 'link' ? 'href' : 'src';
+        resources.push($(el).attr(attribute));
+        const localUrl = getLinkPath($(el).attr(attribute));
+        const newAttr = url.format({ host: localPath, pathname: localUrl });
+        $(el).attr(attribute, newAttr);
       });
 
       fs.writeFile(indexHtml, $.html());
