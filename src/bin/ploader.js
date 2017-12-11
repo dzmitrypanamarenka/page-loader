@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import program from 'commander';
+import process from 'process';
 import loader from '../';
 
 program
@@ -12,7 +13,9 @@ program
 program
   .action((address) => {
     const { output } = program;
-    loader(address, output);
+    return loader(address, output).catch(() => {
+      process.exit(1);
+    });
   });
 
 program.parse(process.argv);

@@ -1,6 +1,6 @@
 {
   "name": "ploader_cli",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -54,7 +54,8 @@
       "lcov"
     ],
     "testPathIgnorePatterns": [
-      "/node_modules/"
+      "/node_modules/",
+      "/__tests__/fixtures/assets"
     ]
   }
 }
