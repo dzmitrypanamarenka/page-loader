@@ -5,13 +5,13 @@ import nock from 'nock';
 import axios from 'axios';
 import httpAdapter from 'axios/lib/adapters/http';
 import loadPage from '../src';
-import {getLocalPath} from '../src/localPath';
+import { getLocalPath } from '../src/localPath';
 
 const fixturesDir = '__tests__/fixtures';
 
 describe('ploader', () => {
   let dir;
-  const {sep} = path;
+  const { sep } = path;
   const host = 'https://hexlet.io';
   const address = `${host}/courses`;
   const html = fs.readFileSync(path.join(fixturesDir, 'index.html'), 'utf-8');
