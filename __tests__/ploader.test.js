@@ -11,6 +11,7 @@ const fixturesDir = '__tests__/fixtures';
 
 describe('ploader', () => {
   let dir;
+  let localPath;
   const { sep } = path;
   const host = 'https://hexlet.io';
   const address = `${host}/courses`;
@@ -19,6 +20,7 @@ describe('ploader', () => {
 
   beforeEach(() => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), sep, 'ploader-'));
+    localPath = `${dir}/${getLocalPath(address)}`;
     axios.defaults.adapter = httpAdapter;
     nock(host).get('/courses').reply(200, html);
   });
@@ -33,9 +35,8 @@ describe('ploader', () => {
   });
 
   it('load image', () => {
-    const localPath = `${dir}/${getLocalPath(address)}`;
     const imgName = 'attachments-135212adf3dff78a8c27b497b919d820cdbac4b2-store-03657a48b7d43899b1ec98a1d47ee315ed44bb2ac2a3417e3b0b8055784b-image.png';
-    const asset = fs.readFileSync(path.join(fixturesDir, 'assets', imgName), 'utf-8');
+    const assetImg = fs.readFileSync(path.join(fixturesDir, 'assets', imgName), 'utf-8');
     return loadPage(address, dir)
       .then(() => {
         let actualAsset = '';
@@ -45,15 +46,14 @@ describe('ploader', () => {
         });
         actualReadable.on('end', () => {
           const actual = actualAsset.toString();
-          expect(actual).toBe(asset);
+          expect(actual).toBe(assetImg);
         });
       });
   });
 
   it('load script', () => {
-    const localPath = `${dir}/${getLocalPath(address)}`;
     const scriptName = 'v2-polyfill.min.js';
-    const asset = fs.readFileSync(path.join(fixturesDir, 'assets', scriptName), 'utf-8');
+    const assetScript = fs.readFileSync(path.join(fixturesDir, 'assets', scriptName), 'utf-8');
     return loadPage(address, dir)
       .then(() => {
         let actualAsset = '';
@@ -63,15 +63,14 @@ describe('ploader', () => {
         });
         actualReadable.on('end', () => {
           const actual = actualAsset.toString();
-          expect(actual).toBe(asset);
+          expect(actual).toBe(assetScript);
         });
       });
   });
 
   it('load link', () => {
-    const localPath = `${dir}/${getLocalPath(address)}`;
     const linkName = 'assets-icons-default-favicon-8fa102c058afb01de5016a155d7db433283dc7e08ddc3c4d1aef527c1b8502b6.ico';
-    const asset = fs.readFileSync(path.join(fixturesDir, 'assets', linkName), 'utf-8');
+    const assetink = fs.readFileSync(path.join(fixturesDir, 'assets', linkName), 'utf-8');
     return loadPage(address, dir)
       .then(() => {
         let actualAsset = '';
@@ -81,19 +80,16 @@ describe('ploader', () => {
         });
         actualReadable.on('end', () => {
           const actual = actualAsset.toString();
-          expect(actual).toBe(asset);
+          expect(actual).toBe(assetink);
         });
       });
   });
 
-  it('check assets dir', () => {
-    const localPath = `${dir}/${getLocalPath(address)}`;
-    return loadPage(address, dir)
-      .then(() => {
-        const files = fs.readdirSync(localPath);
-        expect(files.length).toBeTruthy();
-      });
-  });
+  it('check assets dir', () => loadPage(address, dir)
+    .then(() => {
+      const files = fs.readdirSync(localPath);
+      expect(files.length).toBeTruthy();
+    }));
 
   it('get #1 page: failed', () => {
     nock(host).get('/courses/failed').reply(404);
