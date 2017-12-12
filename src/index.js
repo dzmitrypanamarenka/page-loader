@@ -13,14 +13,14 @@ const openDir = util.promisify(fs.open);
 
 const loadPage = (address, folder) => {
   pageDebug('start loading your page');
-  const indexHtml = path.join(folder, getLocalPath(address, true));
+  const indexHtml = path.join(folder, getLocalPath(address, 'indexHTML'));
   const localPath = path.join(folder, getLocalPath(address));
+  const resources = [];
   pageDebug('sending request');
   return axios(address)
     .then((res) => {
       pageDebug('receiving html');
       const $ = cheerio.load(res.data, { decodeEntities: false });
-      const resources = [];
       pageDebug('selecting assets');
       $('script[src]').add('link[href]').add('img[src]').each((i, el) => {
         const attribute = $(el).prop('name') === 'link' ? 'href' : 'src';
@@ -43,36 +43,13 @@ const loadPage = (address, folder) => {
     .then((resp) => {
       pageDebug('writing assets');
       const data = resp.filter(el => el instanceof Object);
-      return Promise.all(data.map((el) => {
+      return Promise.all([resources, ...data.map((el) => {
         const file = getLinkPath(el.request.path);
         return el.data.pipe(fs.createWriteStream(`${localPath}${file}`));
-      }));
+      })]);
     })
     .catch((err) => {
-      const statusTxt = {
-        403: 'Forbidden',
-        404: 'Not Found',
-        500: 'Internal Server Error',
-      };
-      if (err.code) {
-        pageDebug(err.message);
-        console.error(
-          '\nError!! The program fell out with error:\n%s\n%s path: %s\n',
-          err.message,
-          err.syscall,
-          err.path,
-        );
-      }
-      if (err.response) {
-        const curStatusText = err.response.statusText || statusTxt[err.response.status];
-        pageDebug(`${err.response.status}: ${curStatusText}`);
-        console.error(
-          '\nError!! The program fell out with error :\ncode: %d - %s %s',
-          err.response.status,
-          curStatusText,
-          err.config.url,
-        );
-      }
+      pageDebug(err);
       return Promise.reject(err);
     });
 };

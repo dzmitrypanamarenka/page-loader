@@ -18,10 +18,13 @@ describe('ploader', () => {
   const html = fs.readFileSync(path.join(fixturesDir, 'index.html'), 'utf-8');
   axios.defaults.adapter = httpAdapter;
 
+  beforeAll(() => {
+    axios.defaults.adapter = httpAdapter;
+  });
+
   beforeEach(() => {
     dir = fs.mkdtempSync(path.join(os.tmpdir(), sep, 'ploader-'));
     localPath = `${dir}/${getLocalPath(address)}`;
-    axios.defaults.adapter = httpAdapter;
     nock(host).get('/courses').reply(200, html);
   });
 
